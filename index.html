@@ -138,7 +138,14 @@
       calcBtn.disabled = true;
     } else {
       const m = config.match;
-      infoEl.innerHTML = `<h2>${m.home} vs ${m.away}</h2><p>${m.sport.toUpperCase()} — ${m.time}</p>`;
+      infoEl.innerHTML = `
+      <h2>${m.home} vs ${m.away}</h2>
+      <p>
+        ${m.sport.replace(/_/g, ' ').toUpperCase()}
+        <br />
+        <span>📅 ${m.time}</span>
+      </p>
+    `;
     }
 
     calcBtn.addEventListener('click', () => {
