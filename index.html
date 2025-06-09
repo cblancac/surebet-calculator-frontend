@@ -2,22 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Surebet Stake Calculator</title>
   <style>
-    body { font-family:sans-serif; max-width:500px; margin:2em auto; padding:0 1em; }
-    h1, h2 { text-align:center; }
-    label, input, button { display:block; width:100%; margin:0.75em 0; }
-    .result div { margin:0.5em 0; }
-    .error { color:#a00; }
+    :root {
+      --primary-color: #2c3e50;
+      --accent-color: #e67e22;
+      --bg-color: #f5f5f5;
+      --font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      font-family: var(--font-family);
+      color: var(--primary-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      width: 100%;
+      max-width: 480px;
+      margin: 2rem;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 1.75rem;
+      text-align: center;
+      color: var(--primary-color);
+    }
+    .match-info {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .match-info h2 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+    .match-info p {
+      margin: 0.25rem 0 0;
+      color: #777;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    button:hover {
+      background: #d35400;
+    }
+    .results {
+      margin-top: 1.5rem;
+      border-top: 1px solid #eee;
+      padding-top: 1rem;
+    }
+    .results div {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .results div:last-child {
+      border-bottom: none;
+    }
+    .error {
+      color: #c0392b;
+      margin-top: 1rem;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <h1>Stake Calculator</h1>
-  <div id="info"></div>
-  <label for="total">Total stake (€):</label>
-  <input id="total" type="number" placeholder="e.g. 80">
-  <button id="calc">Calculate</button>
-  <div id="results"></div>
+  <div class="container">
+    <h1>Surebet Stake Calculator</h1>
+
+    <div id="info" class="match-info"></div>
+
+    <label for="total">Total Stake (€)</label>
+    <input id="total" type="number" placeholder="e.g. 80" />
+    <button id="calc">Calculate</button>
+
+    <div id="results" class="results"></div>
+    <div id="error" class="error"></div>
+  </div>
 
   <script>
     const params = new URLSearchParams(location.search);
@@ -25,38 +116,40 @@
     let config;
     try {
       config = dataParam && JSON.parse(decodeURIComponent(dataParam));
-    } catch(e) {
+    } catch (err) {
       config = null;
     }
 
-    const infoEl = document.getElementById("info");
-    const calcBtn = document.getElementById("calc");
-    const resEl  = document.getElementById("results");
+    const infoEl   = document.getElementById("info");
+    const calcBtn  = document.getElementById("calc");
+    const resEl    = document.getElementById("results");
+    const errorEl  = document.getElementById("error");
 
     if (!config) {
-      infoEl.innerHTML = '<div class="error">No data provided. Use ?data=URL-encoded JSON.</div>';
+      errorEl.textContent = 'No data provided. Open via the surebet alert link.';
       calcBtn.disabled = true;
     } else {
-      // show match info
       const m = config.match;
-      infoEl.innerHTML = `<h2>${m.home} vs ${m.away}</h2><p>Time: ${m.time}</p>`;
+      infoEl.innerHTML = `<h2>${m.home} vs ${m.away}</h2><p>${m.sport.toUpperCase()} — ${m.time}</p>`;
     }
 
-    calcBtn.onclick = () => {
-      resEl.innerHTML = "";
+    calcBtn.addEventListener('click', () => {
+      errorEl.textContent = '';
+      resEl.innerHTML = '';
       const total = parseFloat(document.getElementById("total").value);
-      if (!total || total<=0) {
-        resEl.innerHTML = '<div class="error">Enter a valid total stake.</div>';
+      if (!total || total <= 0) {
+        errorEl.textContent = 'Please enter a valid stake amount.';
         return;
       }
       config.outcomes.forEach((o, i) => {
         const stake = (total / o.odd).toFixed(2);
-        const div   = document.createElement("div");
-        div.textContent = 
-          `Outcome ${i+1} (${o.label}) @ odds ${o.odd} — bookmaker ${o.bookmaker}: €${stake}`;
+        const div = document.createElement('div');
+        div.innerHTML = `<strong>Outcome ${i+1} (${o.label})</strong><br/>
+                         Odds: ${o.odd} &nbsp;|&nbsp; Bookmaker: ${o.bookmaker}<br/>
+                         <strong>Stake:</strong> €${stake}`;
         resEl.appendChild(div);
       });
-    };
+    });
   </script>
 </body>
 </html>
