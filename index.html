@@ -8,39 +8,40 @@
     :root {
       --primary-color: #2c3e50;
       --accent-color: #e67e22;
-      --bg-color: #f5f5f5;
+      --bg-color: rgba(255,255,255,0.9);
       --font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 0;
-      background: var(--bg-color);
-      font-family: var(--font-family);
-      color: var(--primary-color);
+      /* Soft background with subtle pattern */
+      background: url('A_background_image_features_sports_and_betting-rel.png') center/cover no-repeat fixed;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
       min-height: 100vh;
+      font-family: var(--font-family);
+      color: var(--primary-color);
     }
     .container {
-      background: #fff;
+      background: var(--bg-color);
       width: 100%;
       max-width: 480px;
-      margin: 2rem;
+      margin: 1rem;
       padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     }
     h1 {
       margin-top: 0;
-      font-size: 1.75rem;
+      font-size: 2rem;
       text-align: center;
       color: var(--primary-color);
     }
     .match-info {
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
     .match-info h2 {
       margin: 0;
@@ -48,10 +49,10 @@
     }
     .match-info p {
       margin: 0.25rem 0 0;
-      color: #777;
+      color: #555;
     }
     label {
-      font-weight: bold;
+      font-weight: 600;
       margin-bottom: 0.5rem;
       display: block;
     }
@@ -60,8 +61,12 @@
       padding: 0.75rem;
       font-size: 1rem;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 6px;
       margin-bottom: 1rem;
+      outline: none;
+    }
+    input[type="number"]:focus {
+      border-color: var(--accent-color);
     }
     button {
       width: 100%;
@@ -70,7 +75,7 @@
       background: var(--accent-color);
       color: #fff;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       transition: background 0.2s ease;
     }
@@ -79,15 +84,18 @@
     }
     .results {
       margin-top: 1.5rem;
-      border-top: 1px solid #eee;
+      border-top: 1px solid #e0e0e0;
       padding-top: 1rem;
     }
     .results div {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #f0f0f0;
+      padding: 0.75rem;
+      border-radius: 6px;
+      background: #fff;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
     .results div:last-child {
-      border-bottom: none;
+      margin-bottom: 0;
     }
     .error {
       color: #c0392b;
