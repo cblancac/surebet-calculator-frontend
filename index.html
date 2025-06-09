@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Surebet Stake Calculator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 400px;
+      margin: 2em auto;
+      padding: 0 1em;
+      line-height: 1.4;
+    }
+    h1 {
+      text-align: center;
+    }
+    label, input, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 0.75em;
+    }
+    input {
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    button {
+      padding: 0.5em;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    .result div {
+      margin: 0.5em 0;
+    }
+    .error {
+      color: #a00;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stake Calculator</h1>
+  <p>Paste your odds in the URL as <code>?o=1.95,2.05,3.10</code></p>
+
+  <label for="total">Total stake (€):</label>
+  <input id="total" type="number" placeholder="e.g. 80" />
+
+  <button id="calc">Calculate</button>
+
+  <div id="results" class="result"></div>
+
+  <script>
+    // Read odds from URL param ?o=1.95,2.05,3.10
+    const params = new URLSearchParams(window.location.search);
+    const odds = (params.get('o') || '')
+      .split(',')
+      .map(s => parseFloat(s))
+      .filter(n => !isNaN(n));
+
+    const resultsEl = document.getElementById('results');
+    const calcBtn   = document.getElementById('calc');
+
+    if (!odds.length) {
+      resultsEl.innerHTML = '<div class="error">No odds provided. Append ?o=1.95,2.05 in the URL.</div>';
+      calcBtn.disabled = true;
+    }
+
+    calcBtn.addEventListener('click', () => {
+      const total = parseFloat(document.getElementById('total').value);
+      resultsEl.innerHTML = '';  // clear
+
+      if (!total || total <= 0) {
+        resultsEl.innerHTML = '<div class="error">Please enter a valid total stake.</div>';
+        return;
+      }
+
+      odds.forEach((o, i) => {
+        const stake = (total / o).toFixed(2);
+        const div = document.createElement('div');
+        div.textContent = `Outcome ${i+1} (odds ${o}): €${stake}`;
+        resultsEl.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
