@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -130,34 +129,35 @@ html
       AUSSIERULES: "🏏"
     };
 
-    const params = new URLSearchParams(location.search);
+    const params   = new URLSearchParams(location.search);
     const dataParam = params.get("data");
     let config;
     try {
       config = dataParam && JSON.parse(decodeURIComponent(dataParam));
-    } catch (err) {
+    } catch {
       config = null;
     }
 
-    const infoEl   = document.getElementById("info");
-    const calcBtn  = document.getElementById("calc");
-    const resEl    = document.getElementById("results");
-    const errorEl  = document.getElementById("error");
+    const infoEl  = document.getElementById("info");
+    const calcBtn = document.getElementById("calc");
+    const resEl   = document.getElementById("results");
+    const errorEl = document.getElementById("error");
 
     if (!config) {
       errorEl.textContent = 'No data provided. Open via the surebet alert link.';
       calcBtn.disabled = true;
     } else {
       const m = config.match;
-      // Extract sport key before any underscore
-      const sportKey = m.sport.split("_")[0].toUpperCase();
-      // Pick emoji or default 🎯
-      const emoji = sportEmojis[sportKey] || "🎯";
+      // Full sport display: replace underscores and uppercase
+      const sportFull = m.sport.replace(/_/g, ' ').toUpperCase();
+      // First word for emoji lookup
+      const firstWord = sportFull.split(' ')[0];
+      const emoji     = sportEmojis[firstWord] || "🎯";
 
       infoEl.innerHTML = `
         <h2>${m.home} vs ${m.away}</h2>
         <p>
-          ${emoji} ${sportKey.replace(/_/g, ' ')}
+          ${emoji} ${sportFull}
           <br />
           <span>📅 ${m.time}</span>
         </p>
