@@ -1,47 +1,170 @@
-<script>
-  const sportEmojis = {
-    SOCCER: "⚽",
-    BASKETBALL: "🏀",
-    BASEBALL: "⚾",
-    ICEHOCKEY: "🏒",
-    AMERICANFOOTBALL: "🏈",
-    RUGBYLEAGUE: "🏉",
-    AUSSIERULES: "🏉",
-    // … puedes ampliar con más
-  };
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Surebet Stake Calculator</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --accent-color: #e67e22;
+      --bg-color: rgba(255,255,255,0.9);
+      --font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      /* Soft background with subtle pattern */
+      background: url('A_background_image_features_sports_and_betting-rel.png') center/cover no-repeat fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: var(--font-family);
+      color: var(--primary-color);
+    }
+    .container {
+      background: var(--bg-color);
+      width: 100%;
+      max-width: 480px;
+      margin: 1rem;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 2rem;
+      text-align: center;
+      color: var(--primary-color);
+    }
+    .match-info {
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .match-info h2 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+    .match-info p {
+      margin: 0.25rem 0 0;
+      color: #555;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      outline: none;
+    }
+    input[type="number"]:focus {
+      border-color: var(--accent-color);
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    button:hover {
+      background: #d35400;
+    }
+    .results {
+      margin-top: 1.5rem;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 1rem;
+    }
+    .results div {
+      padding: 0.75rem;
+      border-radius: 6px;
+      background: #fff;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .results div:last-child {
+      margin-bottom: 0;
+    }
+    .error {
+      color: #c0392b;
+      margin-top: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Surebet Stake Calculator</h1>
 
-  const params = new URLSearchParams(location.search);
-  const dataParam = params.get("data");
-  let config;
-  try {
-    config = dataParam && JSON.parse(decodeURIComponent(dataParam));
-  } catch {
-    config = null;
-  }
+    <div id="info" class="match-info"></div>
 
-  const infoEl   = document.getElementById("info");
-  const calcBtn  = document.getElementById("calc");
-  const resEl    = document.getElementById("results");
-  const errorEl  = document.getElementById("error");
+    <label for="total">Total Stake (€)</label>
+    <input id="total" type="number" placeholder="e.g. 80" />
+    <button id="calc">Calculate</button>
 
-  if (!config) {
-    errorEl.textContent = 'No data provided. Open via the surebet alert link.';
-    calcBtn.disabled = true;
-  } else {
-    const m = config.match;
-    // Obtener clave de deporte (antes de guión bajo) en mayúsculas
-    const sportKey = m.sport.split("_")[0].toUpperCase();
-    // Buscar emoji o usar 🎯 por defecto
-    const emoji = sportEmojis[sportKey] || "🎯";
+    <div id="results" class="results"></div>
+    <div id="error" class="error"></div>
+  </div>
 
-    infoEl.innerHTML = `
+  <script>
+    const params = new URLSearchParams(location.search);
+    const dataParam = params.get("data");
+    let config;
+    try {
+      config = dataParam && JSON.parse(decodeURIComponent(dataParam));
+    } catch (err) {
+      config = null;
+    }
+
+    const infoEl   = document.getElementById("info");
+    const calcBtn  = document.getElementById("calc");
+    const resEl    = document.getElementById("results");
+    const errorEl  = document.getElementById("error");
+
+    if (!config) {
+      errorEl.textContent = 'No data provided. Open via the surebet alert link.';
+      calcBtn.disabled = true;
+    } else {
+      const m = config.match;
+      infoEl.innerHTML = `
       <h2>${m.home} vs ${m.away}</h2>
       <p>
-        ${emoji} ${sportKey.replace(/_/g, " ")}<br />
+        ${m.sport.replace(/_/g, ' ').toUpperCase()}
+        <br />
         <span>📅 ${m.time}</span>
       </p>
     `;
-  }
+    }
 
-  // resto sin cambios…
-</script>
+    calcBtn.addEventListener('click', () => {
+      errorEl.textContent = '';
+      resEl.innerHTML = '';
+      const total = parseFloat(document.getElementById("total").value);
+      if (!total || total <= 0) {
+        errorEl.textContent = 'Please enter a valid stake amount.';
+        return;
+      }
+      config.outcomes.forEach((o, i) => {
+        const stake = (total / o.odd).toFixed(2);
+        const div = document.createElement('div');
+        div.innerHTML = `<strong>Outcome ${i+1} (${o.label})</strong><br/>
+                         Odds: ${o.odd} &nbsp;|&nbsp; Bookmaker: ${o.bookmaker}<br/>
+                         <strong>Stake:</strong> €${stake}`;
+        resEl.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
