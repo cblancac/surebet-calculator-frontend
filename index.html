@@ -118,27 +118,87 @@
   </div>
 
   <script>
-    // Map sport key → emoji
+    // Sport → emoji
     const sportEmojis = {
-      AUSSIERULES: "🏏",
-      SOCCER: "⚽",
-      BASKETBALL: "🏀",
-      BASEBALL: "⚾",
+      SOCCER:           "⚽",
+      BASKETBALL:       "🏀",
+      BASEBALL:         "⚾",
       AMERICANFOOTBALL: "🏈",
-      ICEHOCKEY: "🏒",
-      RUGBYLEAGUE: "🏉",
-      BOXING: "🥊",
-      CRICKET: "🏏",
-      LACROSSE: "🥍",
-      MMA: "🥋",
-      TENNIS: "🎾"
+      ICEHOCKEY:        "🏒",
+      RUGBYLEAGUE:      "🏉",
+      AUSSIERULES:      "🏏",
+      BOXING:           "🥊",
+      CRICKET:          "🏏",
+      LACROSSE:         "🥍",
+      MMA:              "🥋",
+      TENNIS:           "🎾"
     };
 
-    const params   = new URLSearchParams(location.search);
+    // Map bookmaker key → display name & URL
+    const bookmakerInfo = {
+  ballybet: { name: "Bally Bet", url: "https://play.ballybet.com/" },
+  betanysports: { name: "BetAnySports", url: "https://betanysports.eu/" },
+  betclic_fr: { name: "Betclic (FR)", url: "https://www.betclic.com/" },
+  betfair_ex_eu: { name: "Betfair Exchange", url: "https://www.betfair.com/exchange/plus/" },
+  betfair_ex_uk: { name: "Betfair Exchange", url: "https://www.betfair.com/exchange/plus/" },
+  betfair_sb_uk: { name: "Betfair Sportsbook", url: "https://www.betfair.com/" },
+  betmgm: { name: "BetMGM", url: "https://sports.nj.betmgm.com/en/sports" },
+  betonlineag: { name: "BetOnline.ag", url: "https://www.betonline.ag/" },
+  betparx: { name: "betPARX", url: "https://betparx.com/#home" },
+  betrivers: { name: "BetRivers", url: "https://www.betrivers.com/" },
+  betsson: { name: "Betsson", url: "https://betsson.com/" },
+  betus: { name: "BetUS", url: "https://www.betus.com.pa/" },
+  betvictor: { name: "Bet Victor", url: "https://www.betvictor.com/" },
+  betway: { name: "Betway", url: "https://betway.com/en/sports" },
+  bovada: { name: "Bovada", url: "https://www.bovada.lv/" },
+  boylesports: { name: "BoyleSports", url: "https://boylesports.com/sports/" },
+  casumo: { name: "Casumo", url: "https://casumo.com" },
+  coolbet: { name: "Coolbet", url: "https://www.coolbet.com/en/sports" },
+  coral: { name: "Coral", url: "https://sports.coral.co.uk/" },
+  draftkings: { name: "DraftKings", url: "https://draftkings.com/" },
+  espnbet: { name: "ESPN BET", url: "https://espnbet.com/" },
+  everygame: { name: "Everygame", url: "https://everygame.eu/" },
+  fanatics: { name: "Fanatics", url: "https://sportsbook.fanatics.com/" },
+  fanduel: { name: "FanDuel", url: "https://sportsbook.fanduel.com/sports" },
+  fliff: { name: "Fliff", url: "https://www.getfliff.com/" },
+  grosvenor: { name: "Grosvenor", url: "https://www.grosvenorcasinos.com/sport" },
+  gtbets: { name: "GTbets", url: "https://www.gtbets.ag/" },
+  hardrockbet: { name: "Hard Rock Bet", url: "https://app.hardrock.bet/" },
+  ladbrokes_uk: { name: "Ladbrokes", url: "https://www.ladbrokes.com/" },
+  leovegas: { name: "LeoVegas", url: "https://www.leovegas.com/en-gb/" },
+  livescorebet: { name: "LiveScore Bet", url: "https://www.livescorebet.com/" },
+  lowvig: { name: "LowVig.ag", url: "https://www.lowvig.ag/" },
+  marathonbet: { name: "Marathon Bet", url: "https://www.marathonbet.co.uk/en/" },
+  matchbook: { name: "Matchbook", url: "https://www.matchbook.com/" },
+  mybookieag: { name: "MyBookie.ag", url: "https://mybookie.ag/" },
+  nordicbet: { name: "NordicBet", url: "https://www.nordicbet.com/" },
+  onexbet: { name: "1xBet", url: "https://1xbet.com/" },
+  paddypower: { name: "Paddy Power", url: "https://www.paddypower.com/" },
+  parionssport_fr: { name: "Parions Sport (FR)", url: "https://www.enligne.parionssport.fdj.fr" },
+  pinnacle: { name: "Pinnacle", url: "https://www.pinnacle.com/" },
+  rebet: { name: "ReBet", url: "https://rebet.app/" },
+  skybet: { name: "Sky Bet", url: "https://m.skybet.com/" },
+  smarkets: { name: "Smarkets", url: "https://smarkets.com/" },
+  sport888: { name: "888sport", url: "https://www.888sport.com/" },
+  suprabets: { name: "Suprabets", url: "https://www.suprabets.com/" },
+  tipico_de: { name: "Tipico (DE)", url: "https://sports.tipico.de/" },
+  unibet_fr: { name: "Unibet (FR)", url: "https://www.unibet.fr/" },
+  unibet_it: { name: "Unibet (IT)", url: "https://www.unibet.it/" },
+  unibet_nl: { name: "Unibet (NL)", url: "https://www.unibet.nl/" },
+  unibet_uk: { name: "Unibet", url: "https://www.unibet.co.uk/" },
+  virginbet: { name: "Virgin Bet", url: "https://www.virginbet.com/" },
+  williamhill: { name: "William Hill", url: "https://www.williamhill.com/" },
+  williamhill_us: { name: "Caesars", url: "https://www.williamhill.com/us/nj/bet/" },
+  winamax_de: { name: "Winamax (DE)", url: "https://www.winamax.de/" },
+  winamax_fr: { name: "Winamax (FR)", url: "https://winamax.fr/" },
+  windcreek: { name: "Wind Creek (Betfred PA)", url: "https://play.windcreekcasino.com/" }
+};
+
+const params    = new URLSearchParams(location.search);
     const dataParam = params.get("data");
     let config;
     try {
-      config = dataParam && JSON.parse(decodeURIComponent(dataParam));
+      config = JSON.parse(decodeURIComponent(dataParam));
     } catch {
       config = null;
     }
@@ -153,9 +213,7 @@
       calcBtn.disabled = true;
     } else {
       const m = config.match;
-      // Full sport display: replace underscores and uppercase
       const sportFull = m.sport.replace(/_/g, ' ').toUpperCase();
-      // First word for emoji lookup
       const firstWord = sportFull.split(' ')[0];
       const emoji     = sportEmojis[firstWord] || "🎯";
 
@@ -163,7 +221,7 @@
         <h2>${m.home} vs ${m.away}</h2>
         <p>
           ${emoji} ${sportFull}
-          <br />
+          <br/>
           <span>📅 ${m.time}</span>
         </p>
       `;
@@ -179,10 +237,18 @@
       }
       config.outcomes.forEach((o, i) => {
         const stake = (total / o.odd).toFixed(2);
+        const info  = bookmakerInfo[o.bookmaker] || { name: o.bookmaker, url: "#" };
+
         const div = document.createElement('div');
-        div.innerHTML = `<strong>Outcome ${i+1} (${o.label})</strong><br/>
-                         Odds: ${o.odd} &nbsp;|&nbsp; Bookmaker: ${o.bookmaker}<br/>
-                         <strong>Stake:</strong> €${stake}`;
+        div.innerHTML = `
+          <strong>Outcome ${i+1} (${o.label})</strong><br/>
+          Odds: ${o.odd} &nbsp;|&nbsp;
+          Bookmaker:
+          <a href="${info.url}" target="_blank" rel="noopener">
+            ${info.name}
+          </a><br/>
+          <strong>Stake:</strong> €${stake}
+        `;
         resEl.appendChild(div);
       });
     });
