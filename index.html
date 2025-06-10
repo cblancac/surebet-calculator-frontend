@@ -217,12 +217,26 @@ const params    = new URLSearchParams(location.search);
       const firstWord = sportFull.split(' ')[0];
       const emoji     = sportEmojis[firstWord] || "🎯";
 
+      // helper to turn ISO → “Oct 06, 2025 20:00”
+      function formatDate(iso) {
+        const d = new Date(iso);
+        return new Intl.DateTimeFormat('en-US', {
+          day:   '2-digit',
+          month: 'short',
+          year:  'numeric',
+          hour:  '2-digit',
+          minute:'2-digit',
+          hour12: false,
+          timeZone: 'UTC'
+        }).format(d);
+      }
+
       infoEl.innerHTML = `
         <h2>${m.home} vs ${m.away}</h2>
         <p>
           ${emoji} ${sportFull}
-          <br/>
-          <span>📅 ${m.time}</span>
+          <br />
+          <span>📅 ${formatDate(m.time)}</span>
         </p>
       `;
     }
