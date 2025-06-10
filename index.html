@@ -1,3 +1,4 @@
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +16,6 @@
     body {
       margin: 0;
       padding: 0;
-      /* Soft background with subtle pattern */
       background: url('A_background_image_features_sports_and_betting-rel.png') center/cover no-repeat fixed;
       display: flex;
       justify-content: center;
@@ -119,6 +119,17 @@
   </div>
 
   <script>
+    // Map sport key → emoji
+    const sportEmojis = {
+      SOCCER: "⚽",
+      BASKETBALL: "🏀",
+      BASEBALL: "⚾",
+      AMERICANFOOTBALL: "🏈",
+      ICEHOCKEY: "🏒",
+      RUGBYLEAGUE: "🏉",
+      AUSSIERULES: "🏏"
+    };
+
     const params = new URLSearchParams(location.search);
     const dataParam = params.get("data");
     let config;
@@ -138,14 +149,19 @@
       calcBtn.disabled = true;
     } else {
       const m = config.match;
+      // Extract sport key before any underscore
+      const sportKey = m.sport.split("_")[0].toUpperCase();
+      // Pick emoji or default 🎯
+      const emoji = sportEmojis[sportKey] || "🎯";
+
       infoEl.innerHTML = `
-      <h2>${m.home} vs ${m.away}</h2>
-      <p>
-        ${m.sport.replace(/_/g, ' ').toUpperCase()}
-        <br />
-        <span>📅 ${m.time}</span>
-      </p>
-    `;
+        <h2>${m.home} vs ${m.away}</h2>
+        <p>
+          ${emoji} ${sportKey.replace(/_/g, ' ')}
+          <br />
+          <span>📅 ${m.time}</span>
+        </p>
+      `;
     }
 
     calcBtn.addEventListener('click', () => {
